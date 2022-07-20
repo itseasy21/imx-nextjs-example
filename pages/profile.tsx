@@ -46,7 +46,7 @@ const Profile = () => {
       // 1 generate stark wallet
       const l2Wallet = await generateStarkWallet(l1Signer);
       setl2Wallet(l2Wallet);
-      console.log("1 -> l2wallet:", l2Wallet);
+      console.log("1 👉 l2wallet:", l2Wallet);
 
       const address = await l1Signer.getAddress();
       setAddress(address);
@@ -62,7 +62,7 @@ const Profile = () => {
         l1Signer,
         l2Wallet
       );
-      console.log("2 => register user", response);
+      console.log("2 👉 register user", response);
 
       // 3 get user balance
       const balancesApi = new BalancesApi(config.api);
@@ -72,7 +72,7 @@ const Profile = () => {
       if (l2Bal.data.result.length > 0) {
         setL2Balance(l2Bal.data.result[0]?.balance);
       }
-      console.log("3 => l2 balance", l2Bal);
+      console.log("3 👉 l2 balance", l2Bal);
     }
   };
 
