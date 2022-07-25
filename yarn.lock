@@ -587,9 +587,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@imtbl/core-sdk@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@imtbl/core-sdk@npm:0.5.0"
+"@imtbl/core-sdk@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@imtbl/core-sdk@npm:0.6.0"
   dependencies:
     "@ethersproject/bignumber": ^5.6.2
     "@ethersproject/providers": ^5.6.4
@@ -602,7 +602,7 @@ __metadata:
     ethereumjs-wallet: ^1.0.2
     ethers: ^5.6.9
     hash.js: ^1.1.7
-  checksum: a3dd821077888fdc661a671f1f01e4e82bd7ba44aa62570725afbb7a44df3147165eaf37a9088bf2bc4f0365cac78ce91ed3035b491a2b4811c78c455d4ecc8e
+  checksum: 9399a77229fd09f02f1f22e15c535ca36cf0b7018bfe56fd43bc31bdb2d72914412674de56a040aa8349f4327083f5d0f0f8f025f646a11ce6c47d6c5d521e71
   languageName: node
   linkType: hard
 
@@ -4959,7 +4959,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "magic-nextjs@workspace:."
   dependencies:
-    "@imtbl/core-sdk": ^0.5.0
+    "@imtbl/core-sdk": ^0.6.0
     "@magic-ext/connect": ^0.1.6
     "@magic-ext/oauth": ^0.7.0
     "@magic-sdk/admin": 1.4.1

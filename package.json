@@ -6,7 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@imtbl/core-sdk": "^0.5.0",
+    "@imtbl/core-sdk": "^0.6.0",
     "@magic-ext/connect": "^0.1.6",
     "@magic-ext/oauth": "^0.7.0",
     "@magic-sdk/admin": "1.4.1",
