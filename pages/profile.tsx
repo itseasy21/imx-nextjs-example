@@ -91,12 +91,12 @@ const Profile = () => {
     }
   };
 
-  // Deposit using API
-  const despositApi = async () => {
+  // Deposit from L1 Wallet
+  const deposit = async () => {
     if (l1Signer && l1Provider && l2Wallet) {
       // Get instance of core contract
       const contract = Core__factory.connect(
-        config.registrationContractAddress,
+        config.starkContractAddress,
         l1Signer
       );
       const encodingApi = new EncodingApi(config.api);
@@ -168,7 +168,7 @@ const Profile = () => {
           const tx = await l1Signer.sendTransaction({
             ...populatedTransaction,
             value: amount,
-            gasLimit: 99362,
+            gasLimit: 199362,
             maxPriorityFeePerGas: ethers.utils.parseUnits("1.5", "gwei"),
           });
           console.log("Mining transaction... 👇🏻");
@@ -184,16 +184,6 @@ const Profile = () => {
     }
   };
 
-  // TODO: deposit funds from L1 wallet
-  const deposit = async () => {
-    if (l1Signer && coreSdkWorkflows) {
-      const depositMoney = await coreSdkWorkflows.depositEth(l1Signer, {
-        type: TokenType.ETH,
-        amount: "0.000001",
-      });
-      console.log("deposit 👉", depositMoney);
-    }
-  };
   // TODO: deposit funds from moonpay wallet
   // TODO: buy nft
   // TODO: sell the same nft for 0.22 ETH
@@ -229,7 +219,7 @@ const Profile = () => {
             <div className="label">Deposit 0.0001 ETH</div>
             <div className="profile-info">
               <div>
-                <button onClick={despositApi}>
+                <button onClick={deposit}>
                   Deposit 0.0001 ETH from L1 wallet
                 </button>
               </div>
