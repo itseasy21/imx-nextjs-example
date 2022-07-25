@@ -39,17 +39,6 @@ const Profile = () => {
     }
   }, []);
 
-  const isUserRegistered = async (userAddress: string): Promise<boolean> => {
-    try {
-      const userDet = await usersApi.getUsers({ user: userAddress });
-      setL2Address(userDet.data.accounts[0]);
-      console.log("user check passed 👉", userDet);
-      return true;
-    } catch (error) {
-      return false;
-    }
-  };
-
   const init = async () => {
     if (magic) {
       const provider = new Web3Provider(magic.rpcProvider as any);
@@ -61,7 +50,6 @@ const Profile = () => {
 
       const address = await l1Signer.getAddress();
       setL1Address(address);
-      console.log("provider network", await provider.getCode(address));
 
       setL1Balance(
         ethers.utils.formatEther(
@@ -69,29 +57,28 @@ const Profile = () => {
         )
       );
 
-      if (!isUserRegistered(address)) {
-        // 1 generate stark wallet
-        const l2Wallet = await generateStarkWallet(l1Signer);
-        setl2Wallet(l2Wallet);
-        setL2Address(l2Wallet.starkPublicKey);
-        console.log("1 👉 l2wallet:", l2Wallet);
+      // 1 generate stark wallet
+      const l2Wallet = await generateStarkWallet(l1Signer);
+      setl2Wallet(l2Wallet);
+      setL2Address(l2Wallet.starkPublicKey);
+      console.log("1 👉 l2wallet:", l2Wallet);
 
-        // This will be the L2 signer
-        const l2Signer = new BaseSigner(l2Wallet.starkKeyPair);
+      // This will be the L2 signer
+      const l2Signer = new BaseSigner(l2Wallet.starkKeyPair);
 
-        // 2 post stark wallet generation register user on imx
-        await coreSdkWorkflows.registerOffchainWithSigner({
-          l1Signer,
-          l2Signer,
-        });
+      // 2 post stark wallet generation register user on imx
+      await coreSdkWorkflows.registerOffchainWithSigner({
+        l1Signer,
+        l2Signer,
+      });
+      console.log("2 👉 registerOffChainWithSigner: ☑︎");
 
-        // deprecated - use registerOffchainWithSigner
-        // const response = await coreSdkWorkflows.registerOffchain(
-        //   l1Signer,
-        //   l2Wallet
-        // );
-        // console.log("2 👉 register user", response);
-      }
+      // deprecated - use registerOffchainWithSigner
+      // const response = await coreSdkWorkflows.registerOffchain(
+      //   l1Signer,
+      //   l2Wallet
+      // );
+      // console.log("2 👉 register user", response);
 
       // 3 get user balance
       const l2Bal = await balancesApi.listBalances({
@@ -106,10 +93,10 @@ const Profile = () => {
 
   // Deposit using API
   const despositApi = async () => {
-    if (l1Signer && l1Provider) {
+    if (l1Signer && l1Provider && l2Wallet) {
       // Get instance of core contract
       const contract = Core__factory.connect(
-        config.starkContractAddress,
+        config.registrationContractAddress,
         l1Signer
       );
       const encodingApi = new EncodingApi(config.api);
@@ -143,37 +130,57 @@ const Profile = () => {
       const assetType = encodingResult.data.asset_type;
       const starkPublicKey = signableDepositResult.data.stark_key;
       const vaultId = signableDepositResult.data.vault_id;
+      let populatedTransaction: ethers.PopulatedTransaction;
 
-      //could be used
-      const nonce = signableDepositResult.data.nonce;
-      const gasPrice = await l1Provider.getGasPrice();
+      coreSdkWorkflows
+        .isRegisteredOnchain(l1Signer, l2Wallet)
+        .then(async () => {
+          console.log("deposit using depositEth 👇🏻");
+          // Populate and send transaction
+          populatedTransaction = await contract.populateTransaction[
+            "deposit(uint256,uint256,uint256)"
+          ](starkPublicKey, assetType, vaultId);
 
-      // Populate and send transaction
-      // const populatedTransaction =
-      //   await contract.populateTransaction.depositEth(
-      //     starkPublicKey,
-      //     assetType,
-      //     vaultId
-      //   );
-      const populatedTransaction = await contract.populateTransaction[
-        "deposit(uint256,uint256,uint256)"
-      ](starkPublicKey, assetType, vaultId);
+          console.log("populatedTransaction", populatedTransaction);
+        })
+        .catch(async () => {
+          console.log("deposit using registerAndDepositEth 👇🏻");
+          //register user
+          const signableResult = await usersApi.getSignableRegistration({
+            getSignableRegistrationRequest: {
+              ether_key: l1Address,
+              stark_key: l2Address,
+            },
+          });
 
-      console.log("populatedTransaction", populatedTransaction);
-
-      const tx = await l1Signer.sendTransaction({
-        ...populatedTransaction,
-        gasLimit: 99362,
-        value: amount,
-        maxPriorityFeePerGas: ethers.utils.parseUnits("1.5", "gwei"),
-      });
-      console.log("Mining transaction...");
-      console.log(`https://${ethNetwork}.etherscan.io/tx/${tx.hash}`);
-      // Waiting for the transaction to be mined
-      const receipt = await tx.wait();
-      // The transaction is now on chain!
-      console.log(`Mined in block ${receipt.blockNumber}`);
-      console.log("deposit receipt 👉", receipt);
+          //register and deposit
+          populatedTransaction =
+            await contract.populateTransaction.registerAndDepositEth(
+              l1Address,
+              starkPublicKey,
+              signableResult.data.operator_signature,
+              assetType,
+              vaultId
+            );
+          console.log("populatedTransaction", populatedTransaction);
+        })
+        .finally(async () => {
+          const tx = await l1Signer.sendTransaction({
+            ...populatedTransaction,
+            value: amount,
+            gasLimit: 99362,
+            maxPriorityFeePerGas: ethers.utils.parseUnits("1.5", "gwei"),
+          });
+          console.log("Mining transaction... 👇🏻");
+          console.log(
+            `Etherscan 👉 https://${ethNetwork}.etherscan.io/tx/${tx.hash}`
+          );
+          // Waiting for the transaction to be mined
+          const receipt = await tx.wait();
+          // The transaction is now on chain!
+          console.log(`Mined in block ${receipt.blockNumber}`);
+          console.log("deposit receipt 👉", receipt);
+        });
     }
   };
 
