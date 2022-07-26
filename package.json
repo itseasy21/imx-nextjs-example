@@ -12,6 +12,7 @@
     "@magic-sdk/admin": "1.4.1",
     "@magiclabs/ui": "0.6.1",
     "ethers": "^5.6.9",
+    "lodash": "^4.17.21",
     "magic-sdk": "^8.1.1",
     "next": "latest",
     "react": "^18.2.0",
@@ -19,6 +20,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/lodash": "^4.14.182",
     "@types/react": "^18.0.15",
     "framer-motion": "^2.3.0",
     "rxjs": "^6.6.2",

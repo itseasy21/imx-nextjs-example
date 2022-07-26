@@ -955,6 +955,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.14.182":
+  version: 4.14.182
+  resolution: "@types/lodash@npm:4.14.182"
+  checksum: 7dd137aa9dbabd632408bd37009d984655164fa1ecc3f2b6eb94afe35bf0a5852cbab6183148d883e9c73a958b7fec9a9bcf7c8e45d41195add6a18c34958209
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 14.14.20
   resolution: "@types/node@npm:14.14.20"
@@ -4919,6 +4926,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
 "loose-envify@npm:^1.0.0, loose-envify@npm:^1.1.0, loose-envify@npm:^1.4.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
@@ -4964,9 +4978,11 @@ __metadata:
     "@magic-ext/oauth": ^0.7.0
     "@magic-sdk/admin": 1.4.1
     "@magiclabs/ui": 0.6.1
+    "@types/lodash": ^4.14.182
     "@types/react": ^18.0.15
     ethers: ^5.6.9
     framer-motion: ^2.3.0
+    lodash: ^4.17.21
     magic-sdk: ^8.1.1
     next: latest
     react: ^18.2.0
